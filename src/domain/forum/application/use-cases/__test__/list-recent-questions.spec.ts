@@ -14,44 +14,42 @@ describe('List Recent Questions', () => {
 	it('should be able to list recent questions', async () => {
 		await inMemoryQuestionRepository.create(
 			makeQuestion({
-				createdAt: new Date(2022, 0, 20)
+				createdAt: new Date(2022, 0, 20),
 			})
 		);
 		await inMemoryQuestionRepository.create(
 			makeQuestion({
-				createdAt: new Date(2022, 0, 18)
+				createdAt: new Date(2022, 0, 18),
 			})
 		);
 		await inMemoryQuestionRepository.create(
 			makeQuestion({
-				createdAt: new Date(2022, 0, 23)
+				createdAt: new Date(2022, 0, 23),
 			})
 		);
 
-		const { questions } = await sut.execute({
+		const result = await sut.execute({
 			page: 1,
 		});
 
-		expect(questions).toEqual([
-			expect.objectContaining({ createdAt: new Date(2022, 0, 23)}),
-			expect.objectContaining({ createdAt: new Date(2022, 0, 20)}),
-			expect.objectContaining({ createdAt: new Date(2022, 0, 18)}),
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.questions).toEqual([
+			expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
+			expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
+			expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
 		]);
-    
 	});
 
 	it('should be able to list paginated recent questions', async () => {
-		for(let i = 0; i < 22; i++){
-			await inMemoryQuestionRepository.create(
-				makeQuestion()
-			);
+		for (let i = 0; i < 22; i++) {
+			await inMemoryQuestionRepository.create(makeQuestion());
 		}
 
-		const { questions } = await sut.execute({
+		const result = await sut.execute({
 			page: 2,
 		});
 
-		expect(questions).toHaveLength(2);
-    
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.questions).toHaveLength(2);
 	});
 });

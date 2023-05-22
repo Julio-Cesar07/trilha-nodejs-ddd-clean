@@ -1,6 +1,7 @@
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository';
 import { EditAnswerUseCase } from '../edit-answer';
 import { makeAnswer } from 'test/factories/make-answer';
+import { NotAllowedError } from '../errors/not-allowed';
 
 let inMemoryAnswerRepository: InMemoryAnswersRepository;
 let sut: EditAnswerUseCase;
@@ -25,7 +26,6 @@ describe('Edit answer', () => {
 		expect(inMemoryAnswerRepository.items[0]).toMatchObject({
 			content: 'Novo conteudo teste',
 		});
-
 	});
 
 	it('should not be able to edit a answer from another user', async () => {
@@ -33,10 +33,13 @@ describe('Edit answer', () => {
 
 		await inMemoryAnswerRepository.create(newAnswer);
 
-		await expect(() => sut.execute({
+		const result = await sut.execute({
 			answerId: newAnswer.id.toString(),
 			authorId: 'author-not-owner',
 			content: 'nao importa',
-		})).rejects.toBeInstanceOf(Error);
+		});
+
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });

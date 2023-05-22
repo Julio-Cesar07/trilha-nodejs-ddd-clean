@@ -11,7 +11,10 @@ describe('Comment on Answer', () => {
 	beforeEach(async () => {
 		inMemoryAnswerRepository = new InMemoryAnswersRepository();
 		inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
-		sut = new CommentOnQuestioUseCase(inMemoryAnswerRepository, inMemoryAnswerCommentsRepository);
+		sut = new CommentOnQuestioUseCase(
+			inMemoryAnswerRepository,
+			inMemoryAnswerCommentsRepository
+		);
 	});
 
 	it('should be able to comment on answer', async () => {
@@ -22,7 +25,7 @@ describe('Comment on Answer', () => {
 		await sut.execute({
 			authorId: 'user-1',
 			content: 'Comment example',
-			answerId: newAnswer.id.toString()
+			answerId: newAnswer.id.toString(),
 		});
 
 		expect(inMemoryAnswerCommentsRepository.items[0]).toMatchObject({

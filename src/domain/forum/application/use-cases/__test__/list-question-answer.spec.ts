@@ -14,34 +14,37 @@ describe('List Question Answers', () => {
 
 	it('should be able to list question answers', async () => {
 		const newQuestion = makeQuestion();
-		for(let i = 0; i < 4; i++)
-			await inMemoryAnswerRepository.create(makeAnswer({
-				questionId: newQuestion.id
-			}));
+		for (let i = 0; i < 4; i++)
+			await inMemoryAnswerRepository.create(
+				makeAnswer({
+					questionId: newQuestion.id,
+				})
+			);
 
-		const { answers } = await sut.execute({
+		const result = await sut.execute({
 			questionId: newQuestion.id.toString(),
-			page: 1
+			page: 1,
 		});
 
-		expect(answers).toHaveLength(4);
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.answers).toHaveLength(4);
 	});
 
 	it('should be able to list paginated question answers', async () => {
 		const newQuestion = makeQuestion();
-		for(let i = 0; i < 22; i++)
+		for (let i = 0; i < 22; i++)
 			await inMemoryAnswerRepository.create(
 				makeAnswer({
-					questionId: newQuestion.id
+					questionId: newQuestion.id,
 				})
 			);
 
-		const { answers } = await sut.execute({
+		const result = await sut.execute({
 			questionId: newQuestion.id.toString(),
 			page: 2,
 		});
 
-		expect(answers).toHaveLength(2);
-    
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.answers).toHaveLength(2);
 	});
 });

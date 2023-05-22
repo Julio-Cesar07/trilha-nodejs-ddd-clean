@@ -10,8 +10,12 @@ let sut: CommentOnQuestioUseCase;
 describe('Comment on Question', () => {
 	beforeEach(async () => {
 		inMemoryQuestionRepository = new InMemoryQuestionsRepository();
-		inMemoryQuestionCommentsRepository = new InMemoryQuestionCommentsRepository();
-		sut = new CommentOnQuestioUseCase(inMemoryQuestionRepository, inMemoryQuestionCommentsRepository);
+		inMemoryQuestionCommentsRepository =
+			new InMemoryQuestionCommentsRepository();
+		sut = new CommentOnQuestioUseCase(
+			inMemoryQuestionRepository,
+			inMemoryQuestionCommentsRepository
+		);
 	});
 
 	it('should be able to comment on question', async () => {
@@ -22,7 +26,7 @@ describe('Comment on Question', () => {
 		await sut.execute({
 			authorId: 'user-1',
 			content: 'Comment example',
-			questionId: newQuestion.id.toString()
+			questionId: newQuestion.id.toString(),
 		});
 
 		expect(inMemoryQuestionCommentsRepository.items[0]).toMatchObject({

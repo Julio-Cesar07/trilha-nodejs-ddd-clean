@@ -14,34 +14,37 @@ describe('List Answer Comments', () => {
 
 	it('should be able to list answer comments', async () => {
 		const newAnswer = makeAnswer();
-		for(let i = 0; i < 4; i++)
-			await inMemoryAnswerCommentsRepository.create(makeAnswerComment({
-				answerId: newAnswer.id
-			}));
+		for (let i = 0; i < 4; i++)
+			await inMemoryAnswerCommentsRepository.create(
+				makeAnswerComment({
+					answerId: newAnswer.id,
+				})
+			);
 
-		const { answerComments } = await sut.execute({
+		const result = await sut.execute({
 			answerId: newAnswer.id.toString(),
-			page: 1
+			page: 1,
 		});
 
-		expect(answerComments).toHaveLength(4);
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.answerComments).toHaveLength(4);
 	});
 
 	it('should be able to list paginated answer comments', async () => {
 		const newAnswer = makeAnswer();
-		for(let i = 0; i < 22; i++)
+		for (let i = 0; i < 22; i++)
 			await inMemoryAnswerCommentsRepository.create(
 				makeAnswerComment({
-					answerId: newAnswer.id
+					answerId: newAnswer.id,
 				})
 			);
 
-		const { answerComments } = await sut.execute({
+		const result = await sut.execute({
 			answerId: newAnswer.id.toString(),
 			page: 2,
 		});
 
-		expect(answerComments).toHaveLength(2);
-    
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.answerComments).toHaveLength(2);
 	});
 });

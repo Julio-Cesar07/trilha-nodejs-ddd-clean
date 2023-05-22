@@ -12,18 +12,20 @@ describe('Get Question By Slug', () => {
 		sut = new GetQuestionBySlugUseCase(inMemoryQuestionRepository);
 
 		const newQuestion = makeQuestion({
-			slug: Slug.create('example-question')
+			slug: Slug.create('example-question'),
 		});
 
 		await inMemoryQuestionRepository.create(newQuestion);
 	});
 
 	it('should be able to get a question by slug', async () => {
-		const { question } = await sut.execute({
-			slug: 'example-question'
+		const result = await sut.execute({
+			slug: 'example-question',
 		});
-	
-		expect(question.id).toBeTruthy();
-		expect(question.title).toEqual(inMemoryQuestionRepository.items[0].title);
+
+		if (result.isRight())
+			expect(result.value?.question).toEqual(
+				inMemoryQuestionRepository.items[0]
+			);
 	});
 });

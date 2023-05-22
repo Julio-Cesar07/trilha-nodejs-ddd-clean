@@ -1,43 +1,46 @@
+import { Either, left, right } from '@/core/either';
 import { Question } from '../../enterprise/entities/question';
 import { QuestionRepository } from '../repositories/interfaces/question-repository';
+import { NotAllowedError } from './errors/not-allowed';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface EditQuestionUseCaseRequest {
-    authorId: string
-    questionId: string
-    title: string
-    content: string
+	authorId: string;
+	questionId: string;
+	title: string;
+	content: string;
 }
 
-interface EditQuestionUseCaseResponse {
-	question: Question
-}
-
+type EditQuestionUseCaseResponse = Either<
+	ResourceNotFoundError | NotAllowedError,
+	{
+		question: Question;
+	}
+>;
 
 export class EditQuestionUseCase {
-	constructor(private questionRepository: QuestionRepository){}
+	constructor(private questionRepository: QuestionRepository) {}
 
 	async execute({
 		authorId,
 		questionId,
 		content,
-		title
-	}: EditQuestionUseCaseRequest): Promise<EditQuestionUseCaseResponse>{
+		title,
+	}: EditQuestionUseCaseRequest): Promise<EditQuestionUseCaseResponse> {
 		const question = await this.questionRepository.findById(questionId);
 
-		if(!question)
-			throw new Error('Question not found.');
+		if (!question) return left(new ResourceNotFoundError());
 
-		if(question.authorId.toString() !== authorId)
-			throw new Error('Not allowed.');
+		if (question.authorId.toString() !== authorId)
+			return left(new NotAllowedError());
 
 		question.title = title;
 		question.content = content;
 
 		this.questionRepository.save(question);
 
-		return {
+		return right({
 			question,
-		};
-        
+		});
 	}
 }

@@ -1,16 +1,20 @@
+import { Either, right } from '@/core/either';
 import { Question } from '../../enterprise/entities/question';
 import { QuestionRepository } from '../repositories/interfaces/question-repository';
 
 interface ListRecentQuestionsUseCaseRequest {
-    page: number
+	page: number;
 }
 
-interface ListRecentQuestionsUseCaseResponse {
-    questions: Question[]
-}
+type ListRecentQuestionsUseCaseResponse = Either<
+	null,
+	{
+		questions: Question[];
+	}
+>;
 
 export class ListRecentQuestionsUseCase {
-	constructor(private questionRepository: QuestionRepository){}
+	constructor(private questionRepository: QuestionRepository) {}
 
 	async execute({
 		page,
@@ -19,8 +23,8 @@ export class ListRecentQuestionsUseCase {
 			page,
 		});
 
-		return {
+		return right({
 			questions,
-		};
+		});
 	}
 }

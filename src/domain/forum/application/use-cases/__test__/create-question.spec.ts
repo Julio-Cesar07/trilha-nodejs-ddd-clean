@@ -10,13 +10,13 @@ describe('Create Question', () => {
 		sut = new CreateQuestionUseCase(inMemoryQuestionRepository);
 	});
 	it('should be able to create a question', async () => {
-		const { question } = await sut.execute({
+		const result = await sut.execute({
 			content: 'Nova reposta',
 			authorId: '1',
-			title: 'Oie, eu sou o goku?'
+			title: 'Oie, eu sou o goku?',
 		});
-	
-		expect(question.id).toBeTruthy();
-		expect(inMemoryQuestionRepository.items[0].id).toEqual(question.id);
+
+		expect(result.isRight()).toBe(true);
+		expect(inMemoryQuestionRepository.items[0]).toEqual(result.value?.question);
 	});
 });

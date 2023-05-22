@@ -8,40 +8,44 @@ let sut: ListQuestionCommentsUseCase;
 
 describe('List Question Comments', () => {
 	beforeEach(async () => {
-		inMemoryQuestionCommentsRepository = new InMemoryQuestionCommentsRepository();
+		inMemoryQuestionCommentsRepository =
+			new InMemoryQuestionCommentsRepository();
 		sut = new ListQuestionCommentsUseCase(inMemoryQuestionCommentsRepository);
 	});
 
 	it('should be able to list question comments', async () => {
 		const newQuestion = makeQuestion();
-		for(let i = 0; i < 4; i++)
-			await inMemoryQuestionCommentsRepository.create(makeQuestionComment({
-				questionId: newQuestion.id
-			}));
+		for (let i = 0; i < 4; i++)
+			await inMemoryQuestionCommentsRepository.create(
+				makeQuestionComment({
+					questionId: newQuestion.id,
+				})
+			);
 
-		const { questionComments } = await sut.execute({
+		const result = await sut.execute({
 			questionId: newQuestion.id.toString(),
-			page: 1
+			page: 1,
 		});
 
-		expect(questionComments).toHaveLength(4);
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.questionComments).toHaveLength(4);
 	});
 
 	it('should be able to list paginated question comments', async () => {
 		const newQuestion = makeQuestion();
-		for(let i = 0; i < 22; i++)
+		for (let i = 0; i < 22; i++)
 			await inMemoryQuestionCommentsRepository.create(
 				makeQuestionComment({
-					questionId: newQuestion.id
+					questionId: newQuestion.id,
 				})
 			);
 
-		const { questionComments } = await sut.execute({
+		const result = await sut.execute({
 			questionId: newQuestion.id.toString(),
 			page: 2,
 		});
 
-		expect(questionComments).toHaveLength(2);
-    
+		expect(result.isRight()).toBe(true);
+		expect(result.value?.questionComments).toHaveLength(2);
 	});
 });

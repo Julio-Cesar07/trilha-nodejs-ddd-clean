@@ -1,6 +1,7 @@
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository';
 import { DeleteQuestionUseCase } from '../delete-question';
 import { makeQuestion } from 'test/factories/make-question';
+import { NotAllowedError } from '../errors/not-allowed';
 
 let inMemoryQuestionRepository: InMemoryQuestionsRepository;
 let sut: DeleteQuestionUseCase;
@@ -18,11 +19,10 @@ describe('Delete question', () => {
 
 		await sut.execute({
 			questionId: newQuestion.id.toString(),
-			authorId: newQuestion.authorId.toString()
+			authorId: newQuestion.authorId.toString(),
 		});
 
 		expect(inMemoryQuestionRepository.items).toHaveLength(0);
-
 	});
 
 	it('should not be able to delete a question from another user', async () => {
@@ -30,9 +30,12 @@ describe('Delete question', () => {
 
 		await inMemoryQuestionRepository.create(newQuestion);
 
-		await expect(() => sut.execute({
+		const result = await sut.execute({
 			questionId: newQuestion.id.toString(),
-			authorId: 'author-not-owner'
-		})).rejects.toBeInstanceOf(Error);
+			authorId: 'author-not-owner',
+		});
+
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(NotAllowedError);
 	});
 });
