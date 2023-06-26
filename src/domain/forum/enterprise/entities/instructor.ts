@@ -2,7 +2,7 @@ import { Entity } from '@/core/entities/entity';
 import { UniqueEntityId } from '@/core/entities/unique-entity-id';
 
 interface InstructorProps {
-	name: string
+	name: string;
 }
 
 export class Instructor extends Entity<InstructorProps> {

@@ -2,13 +2,19 @@ import { makeQuestion } from 'test/factories/make-question';
 import { ListQuestionAnswersUseCase } from '../list-question-answer';
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository';
 import { makeAnswer } from 'test/factories/make-answer';
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository';
 
 let inMemoryAnswerRepository: InMemoryAnswersRepository;
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
 let sut: ListQuestionAnswersUseCase;
 
 describe('List Question Answers', () => {
 	beforeEach(async () => {
-		inMemoryAnswerRepository = new InMemoryAnswersRepository();
+		inMemoryAnswerAttachmentsRepository =
+			new InMemoryAnswerAttachmentsRepository();
+		inMemoryAnswerRepository = new InMemoryAnswersRepository(
+			inMemoryAnswerAttachmentsRepository
+		);
 		sut = new ListQuestionAnswersUseCase(inMemoryAnswerRepository);
 	});
 

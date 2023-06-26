@@ -1,17 +1,12 @@
 import { Either, left, right } from './either';
 
 function doSomething(x: boolean): Either<string, number> {
-	if(x) 
-		return right(10);
+	if (x) return right(10);
 	return left('error');
 }
 
 test('success result', async () => {
 	const result = doSomething(true);
-
-	if(result.isRight()){
-		console.log(result.value);
-	}
 
 	expect(result.isRight()).toBe(true);
 	expect(result.isLeft()).toBe(false);
