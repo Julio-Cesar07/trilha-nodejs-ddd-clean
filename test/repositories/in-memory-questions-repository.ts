@@ -41,6 +41,8 @@ export class InMemoryQuestionsRepository implements QuestionRepository {
 			(item) => item.id === question.id
 		);
 
+		if (questionIndex < 0) return;
+
 		this.items[questionIndex] = question;
 	}
 
